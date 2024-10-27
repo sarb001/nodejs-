@@ -1,7 +1,12 @@
 import express from 'express';
+import zod from 'zod';
 
 const app = express();
 const PORT = 4000;
+const schema = zod.array(zod.number());
+
+// const schema = 
+
 
 let users = [{
     name : 'Amandeep',
@@ -42,10 +47,19 @@ app.get('/checking' , checkInputValidation , checkQuery , (req,res) => {
 
     console.log('completed all middlewares -')
 
-    return res.json({
-        msg : "At the End"
-    })
-    
+    const kidneys = req.body.kidneys;
+    console.log('total kid -',kidneys);
+
+    const response = schema.safeParse(kidneys);
+    if(!response.success){
+        res.status(411).json({
+            msg : " Input is Wrong "
+        })
+    }else{
+        res.send({
+            msg : "Completed.."
+        })
+    }
 })
 
 
