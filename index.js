@@ -1,66 +1,187 @@
 import express from 'express';
-import zod from 'zod';
+import jwt from 'jsonwebtoken' ;
+
+// import zod from 'zod';
 
 const app = express();
 const PORT = 4000;
-const schema = zod.array(zod.number());
 
-// const schema = 
-
-
-let users = [{
-    name : 'Amandeep',
-    kidneys : [{
-        healthy : true
-    }]
-}]
 app.use(express.json());
 
-// Middlewares -
 
-function checkInputValidation(req,res,next){
-    const username = req.headers.username;
-    const password = req.headers.password;
+const ALL_USERS = [
+    {
+      username: "harkirat@gmail.com",
+      password: "123",
+      name: "harkirat singh",
+    },
+    {
+      username: "raman@gmail.com",
+      password: "123321",
+      name: "Raman singh",
+    },
+    {
+      username: "priya@gmail.com",
+      password: "123321",
+      name: "Priya kumari",
+    },
+];
 
-    if(username != 'admin' || password != 'admin'){
-        return res.status(411).json({
-         msg : "Wrong Inputs"
-      })
-    }
-    console.log('valid 1-')
-    next();
-}
 
-function checkQuery(req,res,next){
-    const QueryId = req.query.kidney;
+const jwtpassword = '1234'
 
-    if(QueryId != 2){
-        return res.status(411).json({
-            msg : 'Wrong Quantity..'
-        })
-    }
-    console.log('valid 2-')
-    next();
-}
 
-app.get('/checking' , checkInputValidation , checkQuery , (req,res) => {
+app.post('/signin' , (req,res) => {
+     const  username = req.body.username;
+     console.log('username -',username);
+     const  password = req.body.password;
+     console.log('password -',password);
 
-    console.log('completed all middlewares -')
+     const Token  = jwt.sign({username : username } , jwtpassword);
+     console.log('token is -',Token);
 
-    const kidneys = req.body.kidneys;
-    console.log('total kid -',kidneys);
+     return res.json({
+            Token
+     })
+});
 
-    const response = schema.safeParse(kidneys);
-    if(!response.success){
-        res.status(411).json({
-            msg : " Input is Wrong "
-        })
-    }else{
-        res.send({
-            msg : "Completed.."
+app.get('/getdata' , (req,res) => {
+
+    const token = req.headers.authorization;
+    console.log(' auth token is -',token);
+
+    try {
+        const checkToken = jwt.verify(token,jwtpassword);
+        console.log('chectoken -',checkToken);
+
+        return res.json({
+            msg : "Token Matched"
+        });
+        
+    } catch (error) {   
+        console.log(error);
+        return res.status(403).json({
+            msg : "Invalid Token"
         })
     }
 })
+
+
+
+app.listen(PORT,() => {
+    console.log(` Server Running on  PORT `)
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// let users = [{
+//     name : 'Amandeep',
+//     kidneys : [{
+//         healthy : true
+//     }]
+// }]
+// app.use(express.json());
+
+
+// Middlewares -
+
+
+
+// function checkInputValidation(req,res,next){
+//     const username = req.headers.username;
+//     const password = req.headers.password;
+
+//     if(username != 'admin' || password != 'admin'){
+//         return res.status(411).json({
+//          msg : "Wrong Inputs"
+//       })
+//     }
+//     console.log('valid 1-')
+//     next();
+// }
+
+
+
+// function checkQuery(req,res,next){
+//     const QueryId = req.query.kidney;
+
+//     if(QueryId != 2){
+//         return res.status(411).json({
+//             msg : 'Wrong Quantity..'
+//         })
+//     }
+//     console.log('valid 2-')
+//     next();
+// }
+
+
+
+
+// 
+
+// app.get('/checking' , checkInputValidation , checkQuery , (req,res) => {
+
+//     console.log('completed all middlewares -')
+
+//     const kidneys = req.body.kidneys;
+//     console.log('total kid -',kidneys);
+
+//     const response = schema.safeParse(kidneys);         // using zod
+//     if(!response.success){  
+//         res.status(411).json({
+//             msg : " Input is Wrong "
+//         })
+//     }else{
+//         res.send({
+//             msg : "Completed.."
+//         })
+//     }
+// })/
+
+
+
+// -----
+
+
+// const Schema = zod.object({
+//     email    : zod.string().email(),
+//     password : zod.string().min(8)
+// })
+
+
+
+// app.get('/checking' , (req,res) => {
+
+//     const Body = req.body;
+//     console.log('Body  -',Body);
+
+//     const Response = Schema.safeParse(Body);        // Parsing whole body having obj
+//     console.log('Resp -',Response); 
+
+//     if(!Response.success){
+//         return res.status(411).json({
+//             msg : "Wrong Inputs"
+//         })
+//     }
+
+//     res.status(200).json({
+//         msg :' Obj Done'
+//     })
+
+// })
 
 
 
@@ -147,11 +268,6 @@ app.get('/checking' , checkInputValidation , checkQuery , (req,res) => {
 
 
 
-
-
-app.listen(PORT,() => {
-    console.log(` Server Running on  PORT `)
-})
 
 
 
