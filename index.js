@@ -28,8 +28,7 @@ const ALL_USERS = [
 ];
 
 
-const jwtpassword = '1234'
-
+const secretkey = '1234' 
 
 app.post('/signin' , (req,res) => {
      const  username = req.body.username;
@@ -37,13 +36,34 @@ app.post('/signin' , (req,res) => {
      const  password = req.body.password;
      console.log('password -',password);
 
-     const Token  = jwt.sign({username : username } , jwtpassword);
-     console.log('token is -',Token);
-
-     return res.json({
-            Token
-     })
+     if(username && password){
+        const Token  = jwt.sign({username : username } , secretkey);
+        console.log('token is -',Token);
+        if(!Token){
+            return res.status(401).json({
+                msg : "Not Authorized"
+            })
+        }else{  
+            return res.json({
+                Token
+            });
+        }
+     }else{
+        return res.status(403).json({
+            msg : " Invalid User Credentails "
+        })
+     }
+      
 });
+
+
+ function getusers(name){
+   return ALL_USERS.filter(data => {
+        if(data.username === name){
+            return data;
+        }
+    })
+ }
 
 app.get('/getdata' , (req,res) => {
 
@@ -51,19 +71,23 @@ app.get('/getdata' , (req,res) => {
     console.log(' auth token is -',token);
 
     try {
-        const checkToken = jwt.verify(token,jwtpassword);
+        const checkToken = jwt.verify(token,secretkey);
         console.log('chectoken -',checkToken);
 
+       const users =  getusers(checkToken.username);
+       console.log('users -',users);
+
         return res.json({
-            msg : "Token Matched"
+         msg : "Token Matched"
         });
-        
+
     } catch (error) {   
         console.log(error);
         return res.status(403).json({
             msg : "Invalid Token"
         })
     }
+
 })
 
 
