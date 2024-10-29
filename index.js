@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import { UserModel } from './UserModes.js';
 import bcrypt from 'bcrypt';
 
-// import zod from 'zod';
+import zod from 'zod';
 
 const app = express();
 const PORT = 4000;
@@ -15,9 +15,6 @@ app.use(express.json());
 
 
 // -- Connecting  Db -
-
-
-
 
 
 
@@ -43,13 +40,25 @@ try {
 
 app.post('/signup' , async(req,res) => {
     try {
-        const { email , password } = req.body;
+        const Body = req.body;
+        console.log('Body is -',Body);
+                                                // Applied Zod here  
+        const Schema = zod.object({
+            email    : zod.string().email(),
+            password : zod.string().min(8 , {message : " Must be more than 8 character "})
+        })
 
-        if(!email || !password){
+        const Response = Schema.safeParse(Body);            // success true - parsed 
+        console.log('check valid -',Response);
+
+        if(!Response.success){
             return res.status(411).json({
-                msg : 'Invalid Credentails'
+                msg : "Wrong Inputs"
             })
-        } 
+        }
+
+        const { data : {email , password } } = Response;
+        console.log('email | pass -',{email,password});
 
         const Finduser = await UserModel.findOne({ email : email });
         console.log('FinduSER -',Finduser);
@@ -74,6 +83,7 @@ app.post('/signup' , async(req,res) => {
 
 
     } catch (error) {
+        console.log('erro -',error);
         return res.status(404).json({
             msg : "Signup Error"
         })
