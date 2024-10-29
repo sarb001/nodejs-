@@ -1,94 +1,128 @@
 import express from 'express';
 import jwt from 'jsonwebtoken' ;
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
 // import zod from 'zod';
 
 const app = express();
 const PORT = 4000;
 
+dotenv.config();
 app.use(express.json());
 
 
-const ALL_USERS = [
-    {
-      username: "harkirat@gmail.com",
-      password: "123",
-      name: "harkirat singh",
-    },
-    {
-      username: "raman@gmail.com",
-      password: "123321",
-      name: "Raman singh",
-    },
-    {
-      username: "priya@gmail.com",
-      password: "123321",
-      name: "Priya kumari",
-    },
-];
+// -- Connecting  Db -
 
 
-const secretkey = '1234' 
+    // const Db = mongoose.connect('mongodb+srv://admin:admin@cluster0.s864k.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0').then(conn => {
+    //     console.log('DB Name is -',conn.connection.name)
+    //     console.log('Connection is -',conn.connection.host)
+    // });
 
-app.post('/signin' , (req,res) => {
-     const  username = req.body.username;
-     console.log('username -',username);
-     const  password = req.body.password;
-     console.log('password -',password);
 
-     if(username && password){
-        const Token  = jwt.sign({username : username } , secretkey);
-        console.log('token is -',Token);
-        if(!Token){
-            return res.status(401).json({
-                msg : "Not Authorized"
-            })
-        }else{  
-            return res.json({
-                Token
-            });
-        }
-     }else{
-        return res.status(403).json({
-            msg : " Invalid User Credentails "
+// CLuster Created
+// Db name Entered 
+
+
+try {
+        const Db = mongoose.connect(process.env.DATABASE_URL , {
+            dbName : 'Connection'
+        }).then(con => {
+            console.log('Db name is -',con.connection.name)
+            console.log('HOst is -',con.connection.host)
         })
-     }
-      
-});
+
+} catch (error) {
+        console.log('err -',error);
+}
 
 
- function getusers(name){
-   return ALL_USERS.filter(data => {
-        if(data.username === name){
-            return data;
-        }
-    })
- }
+// const ALL_USERS = [
+//     {
+//       username: "harkirat@gmail.com",
+//       password: "123",
+//       name: "harkirat singh",
+//     },
+//     {
+//       username: "raman@gmail.com",
+//       password: "123321",
+//       name: "Raman singh",
+//     },
+//     {
+//       username: "priya@gmail.com",
+//       password: "123321",
+//       name: "Priya kumari",
+//     },
+// ];
 
-app.get('/getdata' , (req,res) => {
 
-    const token = req.headers.authorization;
-    console.log(' auth token is -',token);
+// const secretkey = '1234' 
 
-    try {
-        const checkToken = jwt.verify(token,secretkey);
-        console.log('chectoken -',checkToken);
+// app.post('/signin' , (req,res) => {
+//      const  username = req.body.username;
+//      console.log('username -',username);
+//      const  password = req.body.password;
+//      console.log('password -',password);
 
-       const users =  getusers(checkToken.username);
-       console.log('users -',users);
+//      if(username && password){
+//         const Token  = jwt.sign({username : username } , secretkey);
+//         console.log('token is -',Token);
+//         if(!Token){
+//             return res.status(401).json({
+//                 msg : "Not Authorized"
+//             })
+//         }else{  
+//             return res.json({
+//                 Token
+//             });
+//         }
+//      }else{
+//         return res.status(403).json({
+//             msg : " Invalid User Credentails "
+//         })
+//      }
 
-        return res.json({
-         msg : "Token Matched"
-        });
+// });
 
-    } catch (error) {   
-        console.log(error);
-        return res.status(403).json({
-            msg : "Invalid Token"
-        })
-    }
 
-})
+//  function getusers(name){
+//    return ALL_USERS.filter(data => {
+//         if(data.username === name){
+//             return false;
+//         }else{
+//             return true;
+//         }
+//     })
+//  }
+
+// app.get('/getdata' , (req,res) => {
+
+//     const token = req.headers.authorization;
+//     console.log(' auth token is -',token);
+
+//     try {
+//         const checkToken = jwt.verify(token,secretkey);
+//         console.log('chectoken -',checkToken);
+
+//        const users =  getusers(checkToken.username);
+//        console.log('users -',users);
+
+//         return res.json({
+//           users,
+//           msg : "Token Matched"
+//         });
+
+//     } catch (error) {   
+//         console.log(error);
+//         return res.status(403).json({
+//             msg : "Invalid Token"
+//         })
+//     }
+
+// })
+
+
 
 
 
