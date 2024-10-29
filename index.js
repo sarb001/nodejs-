@@ -37,14 +37,91 @@ try {
         console.log('err -',error);
 }
 
-app.post('/signup' , async (req,res) => {
+// signup --->  create account , hash pass , 
+// login --> check email|pass ->  verify pass , create token  
+
+
+app.post('/signup' , async(req,res) => {
+    try {
+        const { email , password } = req.body;
+
+        if(!email || !password){
+            return res.status(411).json({
+                msg : 'Invalid Credentails'
+            })
+        } 
+
+        const Finduser = await UserModel.findOne({ email : email });
+        console.log('FinduSER -',Finduser);
+
+        if(Finduser){
+            return res.status(411).json({
+                msg : "User Already Exist"
+            })
+        }
+
+        const hashpass = await bcrypt.hash(password,10);
+
+        const CreateUser = await UserModel.create({
+            email ,
+            password : hashpass
+        });
+        console.log('Created User -',CreateUser);
+        return res.status(200).json({
+            CreateUser,
+            msg : "User Created"
+        })
+
+
+    } catch (error) {
+        return res.status(404).json({
+            msg : "Signup Error"
+        })
+    }
 
 })
 
 const jwtSecret = '1234';
 
 app.post('/login' , async(req,res)  => {
+    try {
    
+        const { email , password } = req.body;
+
+        if(!email || !password){
+            return res.status(411).json({
+                msg : 'Invalid Credentails'
+            })
+        } 
+
+        const Finduser = await UserModel.findOne({ email : email }).select('+password');
+        console.log('FinduSER -',Finduser);
+
+        
+        if(Finduser){
+            const Getpass = await bcrypt.compare(password,Finduser.password);
+            console.log('GetPass -',Getpass)
+
+            if(Getpass){
+                const NewToken =  jwt.sign({email : email},jwtSecret);
+                console.log('Created Token -',NewToken);
+
+                return res.status(200).json({
+                success : true,
+                NewToken,
+                msg : "Logged In"
+                });
+            }
+
+        }else{
+            return res.status(411).json({
+                msg : "User not Found"
+            })
+        }
+
+        } catch (error) {
+            return res.status(500)
+        }
 })
 
 
@@ -58,7 +135,6 @@ app.listen(PORT,() => {
     //     console.log('DB Name is -',conn.connection.name)
     //     console.log('Connection is -',conn.connection.host)
     // });
-
 
 
 // const ALL_USERS = [
