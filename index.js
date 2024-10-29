@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken' ;
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import { UserModel } from './UserModes.js';
+import bcrypt from 'bcrypt';
 
 // import zod from 'zod';
 
@@ -39,62 +40,13 @@ try {
 }
 
 app.post('/signup' , async (req,res) => {
-    const Email = req.body.email;
-    const Password = req.body.password;      // BCRYPT Pass 
-
-    if(!Email || !Password){
-        return res.status(403).json({
-            msg : "Fill all the Details"
-        })
-    }
-    
-    const FindUser = await UserModel.findOne({email : Email});
-    console.log('FindUser -',FindUser);
-
-    if(!FindUser){
-        const User = await UserModel.create({
-            email : Email,
-            password : Password
-        });
-        console.log('User is -',User);
-        return res.status(200).json({
-            msg : "Account Created"
-        })
-    }else{   
-        return res.status(400).json({
-            msg : "Account Already Existed"
-        })
-    }
 
 })
 
 const jwtSecret = '1234';
 
 app.post('/login' , async(req,res)  => {
-    const Email = req.body.email;
-    const Password = req.body.password;
-
-    const User = await UserModel.findOne({ email : Email });  
-    console.log('User Found -',User);
-
-    if(!User){
-        return res.status(400).json({
-            msg : "User not Found"
-        })
-    }else{
-        const Token = jwt.sign({Email : Email},jwtSecret);
-        console.log('TOKEN IS -',Token);
-
-        if(!Token){
-            return res.status(411).json({
-                msg : "Token Not Generated"
-            })
-        }
-        return res.status(200).json({
-            Token,
-            msg : "Token Created"
-        })
-    }
+   
 })
 
 
