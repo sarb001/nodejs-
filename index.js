@@ -2,6 +2,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken' ;
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import { UserModel } from './UserModes.js';
 
 // import zod from 'zod';
 
@@ -21,7 +22,7 @@ app.use(express.json());
     // });
 
 
-// CLuster Created
+// Cluster Created
 // Db name Entered 
 
 
@@ -36,6 +37,37 @@ try {
 } catch (error) {
         console.log('err -',error);
 }
+
+app.post('/signup' , async (req,res) => {
+    const Email = req.body.email;
+    const Password = req.body.password;
+
+    if(!Email || !Password){
+        return res.status(403).json({
+            msg : "Fill all the Details"
+        })
+    }
+    
+    const FindUser = await UserModel.findOne({email : Email});
+    console.log('FindUser -',FindUser);
+
+    if(!FindUser){
+        const User = await UserModel.create({
+            email : Email,
+            password : Password
+        });
+        console.log('User is -',User);
+        return res.status(200).json({
+            msg : "Account Created"
+        })
+    }else{   
+        return res.status(400).json({
+            msg : "Account Already Existed"
+        })
+    }
+
+})
+
 
 
 // const ALL_USERS = [
@@ -124,24 +156,9 @@ try {
 
 
 
-
-
 app.listen(PORT,() => {
     console.log(` Server Running on  PORT `)
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -184,8 +201,6 @@ app.listen(PORT,() => {
 //     console.log('valid 2-')
 //     next();
 // }
-
-
 
 
 // 
