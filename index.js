@@ -17,10 +17,8 @@ app.use(express.json());
 // -- Connecting  Db -
 
 
-    // const Db = mongoose.connect('mongodb+srv://admin:admin@cluster0.s864k.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0').then(conn => {
-    //     console.log('DB Name is -',conn.connection.name)
-    //     console.log('Connection is -',conn.connection.host)
-    // });
+
+
 
 
 // Cluster Created
@@ -48,6 +46,18 @@ const jwtSecret = '1234';
 app.post('/login' , async(req,res)  => {
    
 })
+
+
+
+app.listen(PORT,() => {
+    console.log(` Server Running on  PORT `)
+})
+
+
+    // const Db = mongoose.connect(process.env.DATABASE_URL).then(conn => {
+    //     console.log('DB Name is -',conn.connection.name)
+    //     console.log('Connection is -',conn.connection.host)
+    // });
 
 
 
@@ -134,13 +144,6 @@ app.post('/login' , async(req,res)  => {
 //     }
 
 // })
-
-
-
-app.listen(PORT,() => {
-    console.log(` Server Running on  PORT `)
-})
-
 
 
 // let users = [{
