@@ -13,6 +13,25 @@ const PORT = 4000;
 dotenv.config();
 app.use(express.json());
 
+
+// ---
+
+// app.get('/' , (req,res)   => {
+//     console.log('Inside Srver...');
+//     return res.json({
+//         msg : "On the Server"
+//     })
+// })
+
+
+
+app.listen(PORT , () => {
+    console.log('Server is Running on PORT ')
+})
+
+
+
+
 // Middleware Working --
 
 
@@ -46,7 +65,7 @@ app.use(express.json());
 
 
     // ------***  Count the Number of Requests that a server can make 
-    let requestcount = 0;
+    // let requestcount = 0;
 
     //  function Countrequest(req,res,next){
     //     requestcount++;
@@ -56,28 +75,43 @@ app.use(express.json());
 
 
     // Gobally Used Middleware 
-    app.use(function Countrequest(req,res,next){
-            requestcount++;
-            console.log('Count --',requestcount);
-            next();
-    })
+
+    // app.use(function Countrequest(req,res,next){
+    //         requestcount++;
+    //         console.log('Count --',requestcount);
+    //         next();
+    // })
 
 
-    app.get('/ride'  ,(req,res) => {
-        return res.json({
-            msg : " Riding Successfully the Only Rideeeeeeee",
-            requestcount
-        })
-    })
-    app.get('/ride1'  ,(req,res) => {
-        return res.json({
-            msg : " Riding Successfully the First Rideeee ",
-        })
-    })
+    // app.get('/ride'  ,(req,res) => {
+    //     return res.json({
+    //         msg : " Riding Successfully the Only Rideeeeeeee",
+    //         requestcount
+    //     })
+    // })
+    // app.get('/ride1'  ,(req,res) => {
+    //     return res.json({
+    //         msg : " Riding Successfully the First Rideeee ",
+    //     })
+    // })
 
-    app.listen(PORT,() => {
-        console.log(` Server Running on  PORT yoo `)
-    })
+    // app.listen(PORT,() => {
+    //     console.log(` Server Running on  PORT yoo `)
+    // })
+
+
+// *********
+
+
+
+
+
+
+
+
+
+
+
 
 
 
