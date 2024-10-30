@@ -13,132 +13,167 @@ const PORT = 4000;
 dotenv.config();
 app.use(express.json());
 
+// Middleware Working --
+
+
+    // function OldEnoughMiddleware(req,res,next){
+    //     const oldage = req.query.age;
+    //     console.log('age is -',oldage);
+    //     if(oldage >= 14){
+    //         next();
+    //     }else{
+    //         return res.status(411).json({
+    //             msg : "Nope!!!!!"
+    //         })
+    //     }
+    // }
+
+    // app.get('/ride1' , OldEnoughMiddleware  ,(req,res) => {
+    //     return res.json({
+    //         msg : "Riding Successfully the First Ride1 "
+    //     })
+    // })
+
+    // app.get('/ride2' , (req,res) => {
+    //     return res.json({
+    //         msg : "Riding Successfully the Second Ride22222 "
+    //     })
+    // })
+
+    // app.listen(PORT,() => {
+    //     console.log(` Server Running on  PORT `)
+    // })
+
+
 
 // -- Connecting  Db -
-
 
 
 // Cluster Created
 // Db name Entered 
 
 
-try {
-        const Db = mongoose.connect(process.env.DATABASE_URL , {
-            dbName : 'Connection'
-        }).then(con => {
-            console.log('Db name is -',con.connection.name)
-            console.log('HOst is -',con.connection.host)
-        })
+// try {
+//         const Db = mongoose.connect(process.env.DATABASE_URL , {
+//             dbName : 'Connection'
+//         }).then(con => {
+//             console.log('Db name is -',con.connection.name)
+//             console.log('HOst is -',con.connection.host)
+//         })
 
-} catch (error) {
-        console.log('err -',error);
-}
+// } catch (error) {
+//         console.log('err -',error);
+// }
 
 // signup --->  create account , hash pass , 
 // login --> check email|pass ->  verify pass , create token  
 
 
-app.post('/signup' , async(req,res) => {
-    try {
-        const Body = req.body;
-        console.log('Body is -',Body);
-                                                // Applied Zod here  
-        const Schema = zod.object({
-            email    : zod.string().email(),
-            password : zod.string().min(8 , {message : " Must be more than 8 character "})
-        })
+// app.post('/signup' , async(req,res) => {
+//     try {
+//         const Body = req.body;
+//         console.log('Body is -',Body);
+//                                                 // Applied Zod here  
+//         const Schema = zod.object({
+//             email    : zod.string().email(),
+//             password : zod.string().min(8 , {message : " Must be more than 8 character "})
+//         })
 
-        const Response = Schema.safeParse(Body);            // success true - parsed 
-        console.log('check valid -',Response);
+//         const Response = Schema.safeParse(Body);            // success true - parsed 
+//         console.log('check valid -',Response);
 
-        if(!Response.success){
-            return res.status(411).json({
-                msg : "Wrong Inputs"
-            })
-        }
+//         if(!Response.success){
+//             return res.status(411).json({
+//                 msg : "Wrong Inputs"
+//             })
+//         }
 
-        const { data : {email , password } } = Response;
-        console.log('email | pass -',{email,password});
+//         const { data : {email , password } } = Response;
+//         console.log('email | pass -',{email,password});
 
-        const Finduser = await UserModel.findOne({ email : email });
-        console.log('FinduSER -',Finduser);
+//         const Finduser = await UserModel.findOne({ email : email });
+//         console.log('FinduSER -',Finduser);
 
-        if(Finduser){
-            return res.status(411).json({
-                msg : "User Already Exist"
-            })
-        }
+//         if(Finduser){
+//             return res.status(411).json({
+//                 msg : "User Already Exist"
+//             })
+//         }
 
-        const hashpass = await bcrypt.hash(password,10);
+//         const hashpass = await bcrypt.hash(password,10);
 
-        const CreateUser = await UserModel.create({
-            email ,
-            password : hashpass
-        });
-        console.log('Created User -',CreateUser);
-        return res.status(200).json({
-            CreateUser,
-            msg : "User Created"
-        })
+//         const CreateUser = await UserModel.create({
+//             email ,
+//             password : hashpass
+//         });
+//         console.log('Created User -',CreateUser);
+//         return res.status(200).json({
+//             CreateUser,
+//             msg : "User Created"
+//         })
 
 
-    } catch (error) {
-        console.log('erro -',error);
-        return res.status(404).json({
-            msg : "Signup Error"
-        })
-    }
+//     } catch (error) {
+//         console.log('erro -',error);
+//         return res.status(404).json({
+//             msg : "Signup Error"
+//         })
+//     }
 
-})
+// })
 
-const jwtSecret = '1234';
 
-app.post('/login' , async(req,res)  => {
-    try {
+
+// const jwtSecret = '1234';
+
+
+// app.post('/login' , async(req,res)  => {
+//     try {
    
-        const { email , password } = req.body;
+//         const { email , password } = req.body;
 
-        if(!email || !password){
-            return res.status(411).json({
-                msg : 'Invalid Credentails'
-            })
-        } 
+//         if(!email || !password){
+//             return res.status(411).json({
+//                 msg : 'Invalid Credentails'
+//             })
+//         } 
 
-        const Finduser = await UserModel.findOne({ email : email }).select('+password');
-        console.log('FinduSER -',Finduser);
+//         const Finduser = await UserModel.findOne({ email : email }).select('+password');
+//         console.log('FinduSER -',Finduser);
 
         
-        if(Finduser){
-            const Getpass = await bcrypt.compare(password,Finduser.password);
-            console.log('GetPass -',Getpass)
+//         if(Finduser){
+//             const Getpass = await bcrypt.compare(password,Finduser.password);
+//             console.log('GetPass -',Getpass)
 
-            if(Getpass){
-                const NewToken =  jwt.sign({email : email},jwtSecret);
-                console.log('Created Token -',NewToken);
+//             if(Getpass){
+//                 const NewToken =  jwt.sign({email : email},jwtSecret);
+//                 console.log('Created Token -',NewToken);
 
-                return res.status(200).json({
-                success : true,
-                NewToken,
-                msg : "Logged In"
-                });
-            }
+//                 return res.status(200).json({
+//                 success : true,
+//                 NewToken,
+//                 msg : "Logged In"
+//                 });
+//             }
 
-        }else{
-            return res.status(411).json({
-                msg : "User not Found"
-            })
-        }
+//         }else{
+//             return res.status(411).json({
+//                 msg : "User not Found"
+//             })
+//         }
 
-        } catch (error) {
-            return res.status(500)
-        }
-})
+//         } catch (error) {
+//             return res.status(500)
+//         }
+// })
 
 
 
-app.listen(PORT,() => {
-    console.log(` Server Running on  PORT `)
-})
+
+// app.listen(PORT,() => {
+//     console.log(` Server Running on  PORT `)
+// })
 
 
     // const Db = mongoose.connect(process.env.DATABASE_URL).then(conn => {
