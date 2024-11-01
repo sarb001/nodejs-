@@ -25,9 +25,9 @@ app.use(express.json());
 
 
 
-app.listen(PORT , () => {
-    console.log('Server is Running on PORT ')
-})
+// app.listen(PORT , () => {
+//     console.log('Server is Running on PORT ')
+// })
 
 
 
@@ -63,6 +63,10 @@ app.listen(PORT , () => {
     //     console.log(` Server Running on  PORT `)
     // })
 
+
+
+
+    
 
     // ------***  Count the Number of Requests that a server can make 
     // let requestcount = 0;
@@ -243,6 +247,11 @@ app.listen(PORT , () => {
 
 
 
+
+
+
+
+
 // app.listen(PORT,() => {
 //     console.log(` Server Running on  PORT `)
 // })
@@ -365,8 +374,6 @@ app.listen(PORT , () => {
 //     next();
 // }
 
-
-
 // function checkQuery(req,res,next){
 //     const QueryId = req.query.kidney;
 
@@ -434,6 +441,12 @@ app.listen(PORT , () => {
 // })
 
 
+// let users = [{
+//     name : 'Amandeep',
+//     kidneys : [{
+//         healthy : true
+//     }]
+// }]
 
 
 // app.get('/',(req,res) => {
